@@ -1,0 +1,3634 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>股票分析结果 - analysis_results_20260408_192454</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+                sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 16px;
+            padding: 35px 40px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        
+        .header h1 {
+            color: #1a1a1a;
+            font-size: 32px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .header-info {
+            color: #6c757d;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        
+        .controls {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 16px;
+            padding: 25px 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            align-items: flex-start;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 200px;
+        }
+        
+        .control-group label {
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .filter-multi-select {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #ffffff;
+            min-width: 200px;
+            max-width: 450px;
+            transition: border-color 0.3s;
+        }
+        
+        .filter-multi-select:hover {
+            border-color: #667eea;
+        }
+        
+        .filter-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: #f7fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .filter-checkbox:hover {
+            background: #edf2f7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filter-checkbox input[type="checkbox"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+        
+        .filter-checkbox input[type="checkbox"]:checked + span {
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .filter-checkbox:has(input:checked) {
+            background: #e6f2ff;
+            border-color: #667eea;
+        }
+        
+        .sort-select {
+            padding: 12px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            cursor: pointer;
+            background: #ffffff;
+            color: #2d3748;
+            font-weight: 500;
+            transition: all 0.3s;
+            min-width: 180px;
+        }
+        
+        .sort-select:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.15);
+        }
+        
+        .sort-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .stats {
+            display: flex;
+            gap: 15px;
+            margin-left: auto;
+            align-items: center;
+        }
+        
+        .stat-button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: default;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            letter-spacing: 0.3px;
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 25px;
+        }
+        
+        @media (max-width: 1400px) {
+            .cards-container {
+                grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: block;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+        
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .card.hidden {
+            display: none;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .card-title {
+            flex: 1;
+        }
+        
+        .card-title h3 {
+            color: #1a1a1a;
+            font-size: 20px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        
+        .card-title .stock-code {
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+            background: #f7fafc;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        
+        .score-badge {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 800;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(246, 211, 101, 0.4);
+        }
+        
+        .card-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .info-item:hover {
+            background: #edf2f7;
+            transform: translateY(-2px);
+        }
+        
+        .info-label {
+            font-size: 11px;
+            color: #718096;
+            margin-bottom: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-value {
+            font-size: 15px;
+            color: #2d3748;
+            font-weight: 600;
+        }
+        
+        .info-value.positive {
+            color: #10b981;
+            font-weight: 700;
+        }
+        
+        .info-value.negative {
+            color: #ef4444;
+            font-weight: 700;
+        }
+        
+        .action-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        
+        .action-badge.long {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+            box-shadow: 0 2px 8px rgba(30, 64, 175, 0.2);
+        }
+        
+        .action-badge.short {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            box-shadow: 0 2px 8px rgba(153, 27, 27, 0.2);
+        }
+        
+        .action-badge.hold {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #4b5563;
+            box-shadow: 0 2px 8px rgba(75, 85, 99, 0.2);
+        }
+        
+        .card-section {
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .card-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .card-section-content {
+            font-size: 14px;
+            color: #4a5568;
+            line-height: 1.7;
+            background: #f7fafc;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 80px 20px;
+            color: #718096;
+            font-size: 18px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>analysis_results_20260408_192454</h1>
+            <div class="header-info">
+                <div>生成时间: 2026-04-08 19:25:55</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>排序方式</label>
+                <select class="sort-select" id="sortSelect">
+                    <option value="score-desc">评分(高到低)</option>
+                    <option value="score-asc">评分(低到高)</option>
+                    <option value="name-asc">股票名称(A-Z)</option>
+                    <option value="name-desc">股票名称(Z-A)</option>
+                    <option value="price-desc">当前股价(高到低)</option>
+                    <option value="price-asc">当前股价(低到高)</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>评分筛选</label>
+                <div class="filter-multi-select" id="scoreFilter">
+                    <label class="filter-checkbox"><input type="checkbox" value="4" checked><span>4</span></label><label class="filter-checkbox"><input type="checkbox" value="3" checked><span>3</span></label><label class="filter-checkbox"><input type="checkbox" value="2" checked><span>2</span></label><label class="filter-checkbox"><input type="checkbox" value="1" checked><span>1</span></label>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>交易动作筛选</label>
+                <div class="filter-multi-select" id="actionFilter">
+                    <label class="filter-checkbox"><input type="checkbox" value="不交易" checked><span>不交易</span></label><label class="filter-checkbox"><input type="checkbox" value="不交易 (等待右侧突破信号)" checked><span>不交易 (等待右侧突破信号)</span></label><label class="filter-checkbox"><input type="checkbox" value="多头" checked><span>多头</span></label><label class="filter-checkbox"><input type="checkbox" value="观察" checked><span>观察</span></label><label class="filter-checkbox"><input type="checkbox" value="观察/轻仓试探" checked><span>观察/轻仓试探</span></label>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>市场筛选</label>
+                <div class="filter-multi-select" id="marketFilter">
+                    <label class="filter-checkbox"><input type="checkbox" value="美股" checked><span>美股</span></label>
+                </div>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-button">总计: <span id="totalCount">48</span></div>
+                <div class="stat-button">显示: <span id="displayCount">48</span></div>
+            </div>
+        </div>
+        
+        <div class="cards-container" id="cardsContainer">
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="global x silver miners etf" data-code="sil">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>Global X Silver Miners ETF</h3>
+                        <div class="stock-code">SIL</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">贵金属/白银矿业</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">92.840 (盘前 99.000)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+0.96% (盘前 +6.64%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约11亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">93.00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">112.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">右侧低位反转确认；经历大幅下行后在75-80区间构筑双底支撑，当前处于放量突破颈线位的右侧启动阶段。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未直接显示指标，但根据价格形态判断：快慢线已于零轴下方完成金叉并上穿零轴，动能柱持续放大。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未直接显示指标，但从股价大幅跳空推测，KDJ已进入高位钝化区，多头情绪极度亢奋。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">底部结构坚实，双底形态确认；盘前大幅跳空突破93元关键阻力位，由横盘转为趋势上行；白银板块整体联动性强，目前处于右侧趋势起始点；考虑赔率，需观察开盘后是否站稳93元上方。</div>
+                </div>
+            </div>
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="enterprise products" data-code="epd">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>Enterprise Products</h3>
+                        <div class="stock-code">EPD</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">能源/油气中游运输</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">38.41</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+1.53%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约830亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">39.10</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">40.50</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">右侧多头排列延续；上升通道回踩确认；重心稳步抬升</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">运行于零轴上方强势区；高位死叉后能量柱正在由长变短，预示调整动能衰竭，即将完成指标修复</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">J值触底回升，KD指标在低位形成金叉预期，处于超卖后的右侧反抽阶段</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">大趋势处于标准右侧多头排列，上涨动能充沛；近期完成缩量回踩，当前位置处于支撑位附近，赔率极高；技术指标修正接近尾声，具备右侧再次发力条件</div>
+                </div>
+            </div>
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="西部数据" data-code="wdc">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>西部数据</h3>
+                        <div class="stock-code">WDC</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">存储芯片 / 半导体</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">311.96</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+2.57%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约1000亿美元（基于图像价格估算）</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">320.00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">335.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">右侧多头排列延续；股价重心稳步上移；经历回踩确认后的二次进攻阶段。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">运行于零轴上方强势区域；DIF与DEA维持多头排列；红柱动能有再次放大迹象，呈现空中加油形态。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">金叉向上发散；未进入超买钝化区；指标与价格走势同步，无背离风险。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">趋势结构完整，重心不断抬高，属于标准的右侧看涨形态；存储芯片板块近期受资金关注度高；回踩260支撑位后反弹有力，目前赔率较好。</div>
+                </div>
+            </div>
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="天弘科技 (celestica inc.)" data-code="cls">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>天弘科技 (Celestica Inc.)</h3>
+                        <div class="stock-code">CLS</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">电子制造服务 (EMS) / 科技</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">297.34</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+1.72% (盘前+6.05%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约 35 亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">315.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">335.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">底部反转初步确认；重心上移；由左侧阴跌转入右侧反弹轨道</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">零轴下方金叉上行；红柱动能持续扩张；显示超跌反抽动能已转化为趋势修复动能</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">K、D、J三线金叉向上发散；进入强势区域；尚未出现高位钝化，仍有上行空间</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">趋势结构已发生改变，价格成功站稳20日线并形成右侧抬升逻辑；盘前跳空6%预示将强势通过300点心理关口；MACD与KDJ指标共振向好；当前赔率尚可，适合顺势布局</div>
+                </div>
+            </div>
+            <div class="card" data-score="2" data-action="不交易" data-market="美股" data-name="伯克希尔-b" data-code="brk.b">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>伯克希尔-B</h3>
+                        <div class="stock-code">BRK.B</div>
+                    </div>
+                    <div class="score-badge">2</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">多元化金融/保险/投资</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">478.08</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+0.36%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约8800亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">488.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">500.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">下降通道运行中的超跌反抽阶段；高位512.13回落后重心持续下移，尚未形成右侧多头排列</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">零轴下方运行，绿柱虽有缩短迹象，但尚未形成金叉，属于弱势反弹过程</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">J线从超卖区金叉向上，目前位于中位区，显示短线具备反弹惯性但空间受限</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">当前处于典型的左侧震荡筑底期，不符合右侧趋势交易标准；价格承压于下行均线系统，赔率与胜率平衡点尚未出现；需等待5/10日均线走平并形成金叉的右侧信号</div>
+                </div>
+            </div>
+            <div class="card" data-score="2" data-action="不交易" data-market="美股" data-name="医疗保健精选行业指数etf-spdr" data-code="xlv">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>医疗保健精选行业指数ETF-SPDR</h3>
+                        <div class="stock-code">XLV</div>
+                    </div>
+                    <div class="score-badge">2</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">医疗保健/制药/生物科技</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">146.57</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+0.20%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约 380亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">148.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">150.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">左侧超跌反抽阶段；中期下降通道运行中，重心尚未完成右侧抬升</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">零轴下方运行，处于死叉后的缩柱阶段，底部金叉尚未形成，属于典型的弱势空头区域</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">J线从超卖区回勾，K、D线低位企稳，存在短线技术性超跌反抽需求，但高度受限</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">趋势结构失位，目前处于明显的下降趋势中；赔率较差，上方压力重重（148/150/152）；缺乏右侧确认信号，成交量未能配合反弹；医疗板块整体表现偏弱，未现领涨龙头发力</div>
+                </div>
+            </div>
+            <div class="card" data-score="2" data-action="不交易" data-market="美股" data-name="microstrategy" data-code="mstr">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>MicroStrategy</h3>
+                        <div class="stock-code">MSTR</div>
+                    </div>
+                    <div class="score-badge">2</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">软件服务/比特币概念股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">123.72</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-3.11%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约210亿美元（估值）</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">155.00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">118.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">处于空头排列后的低位震荡期；整体重心持续下移，短期在120-150区间构筑平台，尚未形成右侧突破。 </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未显示（从价态推断：处于零轴下方运行，动能偏弱，缺乏金叉共振）。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未显示（从价态推断：处于50中轴下方震荡，无超卖反抽信号）。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">当前处于左侧探底阶段，趋势未见明确企稳迹象；股价受制于下降趋势线，多头排列尚未恢复；量能配合不足，冒然入场赔率较低；必须等待放量长阳突破关键压力位后的右侧确认机会。</div>
+                </div>
+            </div>
+            <div class="card" data-score="2" data-action="不交易" data-market="美股" data-name="critical metals" data-code="crml">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>Critical Metals</h3>
+                        <div class="stock-code">CRML</div>
+                    </div>
+                    <div class="score-badge">2</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">有色金属/关键矿产</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">7.78</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-3.95%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约5.6亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">9.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">8.50</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">左侧筑底阶段；整体处于大级别下跌趋势后的低位缩量震荡期，尚未形成右侧多头排列</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未直观显示，根据价格路径推断处于零轴下方弱势运行，近期虽有修复但未上穿零轴</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未直观显示，推断处于中位震荡区，不具备超买加速或超卖反抽的极端赔率优势</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">长期趋势处于显著空头排列，股价自高点回撤巨大; 目前仅为超跌后的弱势修复，未见放量反包阳线确认反转; 属于左侧博弈区间，右侧趋势交易者应继续持币观望; 赔率虽在但胜率极低</div>
+                </div>
+            </div>
+            <div class="card" data-score="1" data-action="不交易" data-market="美股" data-name="proshares二倍做空白银etf" data-code="zsl">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>ProShares二倍做空白银ETF</h3>
+                        <div class="stock-code">ZSL</div>
+                    </div>
+                    <div class="score-badge">1</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">贵金属空头/大宗商品</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">23.92</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+0.17%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约1.9亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">28.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">21.17</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">长期下行趋势后的低位弱势震荡；重心持续下移，尚未脱离底部震荡箱体，属于典型的左侧结构。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未直接显示指标，但基于价格重心处于历史低位且无明显反弹，推断其位于零轴下方弱势运行。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未直接显示指标，从近期小幅波动推断处于中位钝化，缺乏明确的超卖反抽动力。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">底层资产白银价格（Silver/USD）目前处于强势上涨阶段（图中显示+5.27%），做空杠杆ETF逆势风险极大；右侧交易原则要求不摸底、不博反抽，当前无任何多头排列特征；杠杆ETF具有损耗属性，在震荡市中时间价值对持有者不利，赔率极低。</div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="不交易" data-market="美股" data-name="teekay tankers" data-code="tnk">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>Teekay Tankers</h3>
+                        <div class="stock-code">TNK</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">能源/油轮运输/航运</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">75.82</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-3.06%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约25-30亿美元（中盘股）</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">82.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">74.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">大趋势向上，中线处于宽幅震荡区间；当前属于从次高点回落的阶段，重心小幅下移，尚未出现右侧止跌信号。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未显示（仅显示成交量），根据K线重心判断处于死叉发散或零轴上方回调阶段。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未显示（仅显示成交量），根据近期连续调整判断，目前可能处于中值区域向超卖区运行。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">目前股价处于高位调整阶段，未突破前高也未到达强支撑；上方80美元附近压力明显，右侧入场点尚未触发；赔率一般，盲目进场容易陷入时间成本损失；需观察72-74美元区间的止跌回踩确认。</div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="不交易" data-market="美股" data-name="京东" data-code="jd">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>京东</h3>
+                        <div class="stock-code">JD</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">中概股 / 电子商务</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">28.46</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-0.18%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约447.85亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">30.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">29.80</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">超跌反抽后的平台整理期；短期重心由下行转为横向震荡，尚未形成标准多头排列</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未直接显示，由价格形态推断为零轴下方金叉后运行至零轴附近，红柱动能处于收缩态势</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未直接显示，由价格形态推断处于高位超买区后的死叉向下回落过程，存在调整需求</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">股价从24.50低点反弹至30.00附近，累计涨幅已消化部分利好；当前处于箱体震荡上沿，面临前期跳空缺口及密集筹码区压力；右侧确认信号（突破30.00）尚未出现，此时入场赔率较低</div>
+                </div>
+            </div>
+            <div class="card" data-score="2" data-action="不交易" data-market="美股" data-name="百度" data-code="bidu">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>百度</h3>
+                        <div class="stock-code">BIDU</div>
+                    </div>
+                    <div class="score-badge">2</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">互联网/中概股/人工智能</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">110.61</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-0.60%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约385亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">121.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">115.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">处于明确的中长期下降通道中；重心持续下移，目前处于低位弱势震荡阶段；未见右侧多头扭转信号。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">未在图中直接显示指标，从价格重心判断预计处于零轴下方弱势运行，动能柱收缩乏力。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">未在图中直接显示指标，从震荡区间判断预计处于低位超卖区后的钝化或微弱金叉，参考意义有限。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">趋势处于空头排列，价格运行在下降斜率之下；当前属于典型的左侧探底过程，缺乏右侧确认信号；上方120-130美元区间存在大量历史套牢盘，赔率极低；资金面缺乏进攻共振。</div>
+                </div>
+            </div>
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="泰瑞达 (teradyne)" data-code="ter">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>泰瑞达 (Teradyne)</h3>
+                        <div class="stock-code">TER</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">半导体设备 / 自动测试系统</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">320.48</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+1.60% (盘前+7.29%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约 510 亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">345.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">338.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">高位宽幅震荡收敛；大趋势呈现上升通道后的中继整理形态；股价位于震荡箱体上沿，具备右侧突破潜力</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未直接显示指标线，由价位推断当前处于零轴上方宽幅震荡，能量柱趋于收敛，即将选择方向</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未直接显示指标线，根据近期反弹走势推断处于中值区间向上发散，尚未进入超买区</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">长期趋势维持多头排列；盘前大幅异动预示基本面或消息面利好，极大概率通过跳空方式完成右侧结构确认；目前处于突破临界点，赔率较高</div>
+                </div>
+            </div>
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="intuitive machines" data-code="lunr">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>Intuitive Machines</h3>
+                        <div class="stock-code">LUNR</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">航空航天 / 月球探索</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">22.73</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-0.83% (盘前+8.18%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约 22-25 亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">22.00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">26.50</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">右侧多头排列延续；股价已突破前期宽幅震荡平台（约22.00点），重心显著上移，处于趋势加速阶段。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">MACD位于零轴上方运行；DIF与DEA呈金叉发散状态，红色能量柱持续放量，动能充沛。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">KDJ处于80以上超买区并出现高位钝化；属于典型强势股特征，短期需警惕乖离率过大后的回踩。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">右侧放量突破确立上升通道；盘前大幅跳空显示板块热度高涨；多头排列结构完好，回踩支撑位具备高赔率价值；5/10日均线支撑强劲。</div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="观察/轻仓试探" data-market="美股" data-name="block" data-code="sq (xyz)">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>Block</h3>
+                        <div class="stock-code">SQ (XYZ)</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">观察/轻仓试探</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">金融科技 / 数字支付</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">59.97</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-1.17% (盘前+5.59%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约 365 亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">64.00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">68.50</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">中期探底后的高位横盘震荡；重心企稳但尚未形成标准多头排列；目前处于箱体整理阶段（56.0-64.0区间）</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">DIF与DEA在零轴附近走平，红柱缩短，动能处于中性偏弱状态，亟需金叉确认右侧信号</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">KDJ处于中位区间，未见明显超买或超卖，指标钝化，参考意义下降，需等待发散信号</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">价格经历大跌后在48上方筑底成功，目前处于56-64箱体震荡；盘前跳空至63.32（+5.59%）显示有潜在利好刺激，具备右侧突破潜力；赔率视角看，止损位清晰且距离当前价格较近，若突破则上方空间打开</div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="不交易" data-market="美股" data-name="urnm 铀矿etf-sprott" data-code="urnm">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>URNM 铀矿ETF-Sprott</h3>
+                        <div class="stock-code">URNM</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">铀矿/能源/核能</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">61.69</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-1.95%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约20.2亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">65.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">60.30</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">中期调整后的低位横盘震荡；重心尚未实现右侧抬升，处于多空平衡的观察期</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">推测处于零轴下方低位死叉后的走平状态，红柱动能衰竭，指标显示动能不足</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">中位交织，无明显超买超卖背离，属于典型的震荡整理行情特征</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">趋势结构处于下行后的筑底期，缺乏右侧放量突破信号；目前股价受制于上方下行均线压力，赔率虽高但胜率尚不明确；成交量维持地量，显示市场关注度较低；必须等待重心上移后的右侧确认机会</div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="不交易" data-market="美股" data-name="scorpio tankers" data-code="stng">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>Scorpio Tankers</h3>
+                        <div class="stock-code">STNG</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">能源运输/航运/成品油轮</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">74.36</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-2.85%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约 41 亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">78.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">77.50</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">大级别上升趋势中的次级调整阶段；目前处于高位平台震荡，重心小幅下移</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未显示完整指标，从价格重心判断动能正由强转弱，存在高位死叉预期</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未显示完整指标，从走势判断处于J值从中轴下行寻底过程，尚未进入超卖区</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">长期趋势多头排列完好，但短期处于回撤寻底阶段；目前位置处于震荡区间中位，不具备右侧确认信号；赔率一般，需等待缩量回踩关键支撑位或放量突破压力位；5/10日线当前构成短期压制</div>
+                </div>
+            </div>
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="艾马克技术" data-code="amkr">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>艾马克技术</h3>
+                        <div class="stock-code">AMKR</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">半导体封测 (OSAT)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">47.62 (盘前 50.71)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+1.25% (盘前 +6.49%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约 117.5 亿美元 (估值)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">50.80</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">56.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">右侧视角显示股价正处于宽幅震荡箱体（40-52美元）的中上部；盘前大幅跳空（+6.49%）具有强烈的右侧突破信号，预示趋势可能从震荡转为加速上涨。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未显示具体指标，根据价格趋势推断其正处于零轴上方且出现二次发散迹象。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未显示具体指标，预计目前由于盘前大涨处于高位超买区，存在钝化可能。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">盘前跳空上涨6.49%释放强力右侧信号；股价结构完成底部抬升，赔率较好；半导体板块近期具备行业共振效应；突破50美元关键心理位将打开上方空间。</div>
+                </div>
+            </div>
+            <div class="card" data-score="2" data-action="不交易" data-market="美股" data-name="energy fuels" data-code="uuuu">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>Energy Fuels</h3>
+                        <div class="stock-code">UUUU</div>
+                    </div>
+                    <div class="score-badge">2</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">能源/铀矿/核能</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">17.44</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-2.19%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约27.6亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">19.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">16.80</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">中期处于下降通道或宽幅震荡寻底阶段；高位回落后重心持续下移；尚未形成右侧多头排列</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">指标处于零轴下方运行；动能柱在零轴附近徘徊，缺乏向上发散的趋势动力</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">KDJ处于中位震荡区；无明显的超卖反抽或超买钝化信号；方向指引模糊</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">趋势仍处于下降通道内，缺乏右侧转势的确认信号；成交量不足，显示资金介入意愿低迷；当前位置处于震荡中轴，赔率虽在但胜率极低；严禁在无放量突破前盲目左侧抄底</div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="不交易" data-market="美股" data-name="spdr标普金属与矿产业etf" data-code="xme">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>SPDR标普金属与矿产业ETF</h3>
+                        <div class="stock-code">XME</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">金属与矿业</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">109.80</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-0.38%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约25亿美元（根据行业标普成分股估算）</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">114.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">120.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">中期下行后的低位横盘筑底阶段；处于下降通道上轨压力附近，右侧反转动能尚未完全释放。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">零轴下方运行，双线有低位金叉迹象，绿柱持续收敛，显示空头动能衰竭，进入弱势反抽期。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">脱离超卖区向上发散，目前处于中值区域，未见钝化，短期具备继续向上试探空间。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">价格虽有见底回升迹象但受制于110元水平压力位；MACD仍在零轴下方，反弹性质暂定为超跌反抽而非反转；目前位置处于阻力位附近，追高赔率不佳；需等待缩量回踩不破或放量长阳确认右侧入场点。</div>
+                </div>
+            </div>
+            <div class="card" data-score="2" data-action="不交易" data-market="美股" data-name="布林克国际 (brinker international)" data-code="eat">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>布林克国际 (Brinker International)</h3>
+                        <div class="stock-code">EAT</div>
+                    </div>
+                    <div class="score-badge">2</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">餐饮/休闲服务</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">148.41</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-0.80%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约 65.8 亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">155.00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">143.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">中期高位回落后的低位震荡筑底阶段；K线重心目前处于横向漂移，未形成多头排列；右侧动能匮乏</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未显式提供MACD指标；基于价格走势判断动能处于零轴附近的纠缠状态，无明确趋势指引</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未显式提供KDJ指标；从近期窄幅波动判断，指标可能处于中值区域震荡，无超买超卖信号</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">趋势结构不清晰，处于大跌后的修整期；量价关系未形成共振，买盘动能不足；赔率一般，目前位置处于震荡区间中部，不符合右侧交易的爆发点原则</div>
+                </div>
+            </div>
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="coreweave" data-code="crwv">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>CoreWeave</h3>
+                        <div class="stock-code">CRWV</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">人工智能/GPU云计算/半导体基础设施</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">85.24</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+5.31% (盘前+6.35%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">中大型市值</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">91.00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">105.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">右侧反转确认初期；中期经历了从114.45高点的深幅回撤，目前在70-80区间完成双底构筑，最新K线带量突破多根均线压制，重心上移，初步进入右侧上升通道。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">零轴下方金叉向上；红色动能柱开始放大，显示下跌动能枯竭，多头力量正在重新主导趋势。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">金叉向上运行；处于50-80之间的多头活跃区，尚未进入90以上的极端超买钝化区，短期仍有冲高动能。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">双底结构确认，股价放量刺穿下行趋势线；MACD底部金叉提供波段反弹背离支撑；该标的属于AI算力核心板块，基本面弹性大，当前处于回撤后的赔率优势区间；盘前跳空6%以上显示极强的情绪溢价，右侧确认逻辑成立。</div>
+                </div>
+            </div>
+            <div class="card" data-score="2" data-action="不交易" data-market="美股" data-name="solaris energy infrastructure" data-code="sei">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>Solaris Energy Infrastructure</h3>
+                        <div class="stock-code">SEI</div>
+                    </div>
+                    <div class="score-badge">2</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">能源基础设施/油气设备与服务</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">55.72</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+1.02%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约17.5亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">61.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">58.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">短期右侧破位；高位放量回撤后的超跌修正阶段；中期多头趋势受损，目前处于寻找支撑的左侧阶段</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">零轴上方形成高位死叉；红色能量柱消失，绿色能量柱正在扩张；显示中期动能进入调整周期</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">J值进入超卖区间，存在技术性反抽需求；但尚未形成低位金叉，暂无右侧买入指引</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">短期趋势已由强转弱，跌破关键均线系统；MACD死叉确认，处于空头动能释放期；虽然接近前期支撑区但缺乏右侧企稳信号；赔率虽高但胜率在当前时间点较低，建议观望等待回踩确认成功或底部形态构建</div>
+                </div>
+            </div>
+            <div class="card" data-score="1" data-action="不交易" data-market="美股" data-name="三倍做空生物技术etf-direxion" data-code="labd">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>三倍做空生物技术ETF-Direxion</h3>
+                        <div class="stock-code">LABD</div>
+                    </div>
+                    <div class="score-badge">1</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">生物技术（反向）</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">15.87</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-0.06% (盘后-8.00%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约1.22亿美元（成交额维度）</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">18.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">15.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">空头排列，破位下行；重心持续下移，处于标准下降通道中，无任何右侧止跌迹象</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">零轴下方死叉运行，绿色动能柱持续放大，显示空头动能仍处于加速释放阶段</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">J线进入超卖区钝化，虽有超跌反抽需求，但未见金叉回勾，属于极弱势震荡</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">趋势结构呈现标准空头排列，多周期均线压制明显；跌破17.0关键心理支撑位后未见快速收回，右侧确认破位有效；3倍杠杆ETF损耗严重，在无明确右侧转势信号前博弈超跌反抽赔率极低；盘后显示-8%跌幅，预示空头动能仍有惯性宣泄空间</div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="多头" data-market="美股" data-name="unity software" data-code="u">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>Unity Software</h3>
+                        <div class="stock-code">U</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">软件服务/游戏引擎/元宇宙</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">22.01</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+0.09% (盘后+4.77%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约85亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">24.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">26.50</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">超跌后的筑底震荡期；股价重心由16.78低位缓慢抬升；目前处于右侧上涨的初步确认阶段，尚未形成标准的多头排列。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">零轴下方金叉运行；快慢线开口向上；红色动能柱持续放大，显示短期处于多头反抽趋势中。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">K、D、J三线向上发散；目前处于中高位（50-80区间）；暂无顶背离信号，具备继续冲高动能。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">股价已从最低位16.78明显企稳；MACD金叉提供右侧支撑逻辑；盘前4.77%的涨幅显示短期情绪偏向多头；当前位置距离底部较近，赔率较高，但受限于上方缺口阻力，需防范冲高回落。</div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="多头" data-market="美股" data-name="roundhill meme stock etf" data-code="meme">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>Roundhill Meme Stock ETF</h3>
+                        <div class="stock-code">MEME</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">散户概念/高空头头寸个股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">6.560 (盘前 7.020)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+2.10% (盘前 +7.01%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约1500万美元 (具体随成分股波动)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">7.10</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">7.80</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">超跌反抽转右侧确认初期；短期重心抬升；处于中线下跌通道的上轨突破边缘</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未直接显示，根据价格推述快慢线正在零轴下方金叉向上，能量柱由负转正</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未直接显示，推断处于K、D值向上发散，J值进入超买钝化区</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">价格在5.65止跌后重心稳步右侧抬升，基本摆脱极弱势区域；盘前大涨7%显示多头动能突发性增强，具备右侧加速潜力；由于该资产属性为MEME类高波动ETF，波动极剧烈，当前追高赔率相对一般，建议轻仓介入；核心逻辑在于捕捉超跌后的趋势反转第一波加速</div>
+                </div>
+            </div>
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="美国雅保" data-code="alb">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>美国雅保</h3>
+                        <div class="stock-code">ALB</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">锂矿/特种化学品</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">173.53</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+0.29% (盘前+3.46%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约200亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">188.00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">205.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">中期宽幅震荡后的右侧反弹初期；自205高位回调后在155-160区间获得支撑，目前重心逐步抬升，正尝试挑战前期震荡箱体中轨。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未直接显示具体指标，但根据K线走势推断动能正由负转正，处于零轴附近蓄势。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未直接显示具体指标，根据价格走势推断处于中位金叉向上延伸区，暂无超买钝化风险。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">盘前大幅跳空(+3.46%)显示多头动能爆发，具备右侧突破潜质；155元附近支撑强度已通过二次回踩确认；锂矿板块具备周期回暖预期，当前股价处于相对低位，盈亏比极佳。</div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="不交易" data-market="美股" data-name="智利矿业化工" data-code="sqm">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>智利矿业化工</h3>
+                        <div class="stock-code">SQM</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">基础材料/锂矿/化工</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">78.52</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-2.40%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约224.22亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">86.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">77.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">高位宽幅震荡; 右侧动能减弱</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">推断处于零轴上方死叉运行，绿柱动能释放中</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">快速脱离超买区向下发散，目前处于中性偏下区间，未见超跌钝化</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">股价在86美元附近形成明显阻力并放量下杀，短期进入右侧调整阶段; 虽然盘前有3%左右的反抽，但属于左侧超跌反弹，不符合右侧趋势确认原则; 5日与10日线重心向下移动，赔率一般，建议观望等待回踩支撑位后的放量确认机会</div>
+                </div>
+            </div>
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="半导体etf-ishares" data-code="soxx">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>半导体ETF-iShares</h3>
+                        <div class="stock-code">SOXX</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">半导体/硬件</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">347.76</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+1.06%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约130-150亿美元(AUM)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">350.00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">368.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">右侧趋势回踩确认后重心上移；大级别多头趋势未改，目前处于中期调整后的右侧反弹确认阶段</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未直接显示，根据走势推断DIF/DEA在零轴上方处于金叉修复中，红柱逐步拉长</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未直接显示，根据走势推断J线脱离超卖区向上发散，目前处于50-80中位强势区</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">半导体大行业趋势依然运行在上升通道内；310附近形成阶段性底部并获得支撑；价格重新站回5日、10日等短期均线上方；右侧重心抬升趋势明确</div>
+                </div>
+            </div>
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="罗素2000etf-ishares" data-code="iwm">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>罗素2000ETF-iShares</h3>
+                        <div class="stock-code">IWM</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">美国小盘股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">252.91</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+0.22% (盘前+3.69%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约650亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">263.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">271.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">右侧筑底反弹阶段；盘前大幅跳空预示将进入加速上行的右侧放量突破点，多头排列雏形显现</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">双线于零轴下方完成金叉并正向零轴上方穿越，多头动能柱持续放大，具备趋势转折动能</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">J值快速向上发散进入超买区，显示短期爆发力强，虽有超买迹象但属于强势初期的钝化预期</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">盘前显著跳空+3.69%显示市场情绪发生质变，属强力右侧信号；底部238.690确认后，重心经过小幅震荡后向上换档，赔率较高；罗素2000代表的小盘股补涨逻辑在当前市场具备较强延续性</div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="多头" data-market="美股" data-name="超微电脑" data-code="smci">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>超微电脑</h3>
+                        <div class="stock-code">SMCI</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">AI硬件/服务器/半导体</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">22.67</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+2.81%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约130亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">24.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">26.80</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">超跌反抽后的低位筑底震荡；右侧反转雏形初现</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">零轴下方低位金叉上行；红柱动能持续释放；处于超跌修复路径中</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">脱离超卖区向上发散；暂无钝化迹象；短线具备反弹空间</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">股价在19.48附近获得强支撑，呈现明显的超跌反抽特征；底部巨量确认了买盘介入，赔率极高；目前处于缩量回踩后的右侧确认阶段，风险收益比合理；盘后跳涨预示短期动能较强，但需警惕上方24.00-26.00区间的解套盘压力</div>
+                </div>
+            </div>
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="acm research (盛美半导体)" data-code="acmr">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>ACM Research (盛美半导体)</h3>
+                        <div class="stock-code">ACMR</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">半导体设备</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">41.91 (盘前 46.40)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+0.58% (盘前 +10.71%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约 26.5 亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">45.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">52.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">中期深度回调后的低位箱体筑底；盘前出现强力跳空信号，正处于由左侧摸底向右侧确认转折的关键点。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">零轴下方运行，但动能绿柱持续收敛并趋于走平，存在低位金叉预期，属于典型的超跌反抽向趋势反转过渡形态。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">K线与D线在低位形成金叉并向上发散，脱离超卖区域，短期多头动能占据主导。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">股价从71.65高位回落已久，风险释放充分，赔率极高；盘前10%以上的跳空涨幅是极强的右侧确认信号；板块属性属于半导体设备，具备行业复苏逻辑支撑；量价配合显示筑底成功。 </div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="不交易" data-market="美股" data-name="vistra energy" data-code="vst">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>Vistra Energy</h3>
+                        <div class="stock-code">VST</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">公用事业/独立发电/AI电力需求概念</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">153.68</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+1.38%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约 538 亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">166.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">162.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">高位宽幅震荡调整；重心阶段性下移；目前处于下降通道上轨压力位附近，属于右侧确认前的观察期。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未直接显示指标，根据价格走势推断动能处于零轴附近的反复纠缠期，无明确趋势导向。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未直接显示指标，推测处于中值区间震荡，未进入极端超买或超卖区域。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">趋势处于高位宽幅整理，未出现右侧反转标志；量价配合度一般，多头动能不足；赔率位于震荡区中值，进场性价比不高；需等待回踩确认支撑或向上突破压力后再入场。</div>
+                </div>
+            </div>
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="2倍做多中国互联网股票etf-direxion" data-code="cweb">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>2倍做多中国互联网股票ETF-Direxion</h3>
+                        <div class="stock-code">CWEB</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">中概互联网/科技</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">25.930 (盘前28.24)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-0.92% (盘前+8.91%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约3.1亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">28.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">32.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">右侧筑底转折期；由前期单边下跌转为窄幅平台震荡，当前出现右侧跳空放量突破迹象；K线重心开始抬升，由空头排列向多头形态切换。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">低位死叉动能减弱，绿柱持续缩短；预期在零轴下方发生金叉，形成超跌反抽的右侧确认点。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">KDJ在超卖区金叉后向上发散；目前处于中位，尚未进入高位钝化区，具备反弹空间。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">盘前大涨8.9%标志着趋势由弱转强，属于标准的右侧入场时机；当前价格距离底部25.18支撑位较近，回撤风险可控，赔率极高；中概互联网板块整体情绪回暖，具备板块共振效应。</div>
+                </div>
+            </div>
+            <div class="card" data-score="2" data-action="不交易" data-market="美股" data-name="标普500etf-spdr" data-code="spy">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>标普500ETF-SPDR</h3>
+                        <div class="stock-code">SPY</div>
+                    </div>
+                    <div class="score-badge">2</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">宽基指数</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">659.22</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+0.04%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约5500亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">675.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">651.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">处于中期下行趋势后的低位震荡修复期；重心虽然止跌，但仍处于前期下杀阴线实体的压制范围内，尚未形成右侧多头排列。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">目测处于零轴下方运行，处于死叉后的弱势收敛阶段，动能红柱尚未有效放大。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">由超卖区回钩后在中位区钝化，缺乏明确的共振金叉指引，暗示动能不足。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">当前处于左侧下跌后的超跌反抽阶段，尚未观察到右侧放量突破信号；反弹动能缩量，赔率并不理想；5/10日均线压力仍存，盲目入场易遭遇二次下杀。 ; 必须等待一个明确的放量阳线收复失地后再行介入。</div>
+                </div>
+            </div>
+            <div class="card" data-score="1" data-action="不交易" data-market="美股" data-name="smst 2倍做空mstr etf-defiance" data-code="smst">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>SMST 2倍做空MSTR ETF-Defiance</h3>
+                        <div class="stock-code">SMST</div>
+                    </div>
+                    <div class="score-badge">1</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">加密货币相关/反向杠杆衍生品</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">65.630 (盘前56.00)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+6.47% (盘前-14.67%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约1375.3万美元（以成交额推算流动性较小）</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">不建议加仓</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">65.63</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">空头趋势延续；处于长期下行通道中的反抽衰竭阶段；重心持续下移</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">双线长期运行于零轴下方，属于弱势区域；虽有低位金叉预期但因盘前大跌可能夭折</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">K线与D线在50中值附近转头向下，盘前大跌将导致指标直接进入低位钝化区</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">该标的为2倍杠杆做空工具，自带时间价值损耗；底层资产（MSTR）表现极强，导致该ETF长期承压；盘前大幅跳空低开14%以上，属于极度弱势的右侧确认信号；当前赔率极差，抢反弹属于高风险左侧行为</div>
+                </div>
+            </div>
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="三倍做多小盘股etf-direxion" data-code="tna">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>三倍做多小盘股ETF-Direxion</h3>
+                        <div class="stock-code">TNA</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">美股小盘股 (罗素2000)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">46.75</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+0.60% (盘前+10.89%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约 22.5 亿美元 (AUM)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">48.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">56.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">右侧底部平台突破；短期均线系统由纠缠转为多头向上发散；K线重心明显抬升，脱离近期40-45美金震荡区间</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">MACD在零轴下方形成金叉后持续向上运行；红柱动能持续放大；即将上穿零轴进入多头强势区</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">KDJ三线金叉向上发散；目前处于中高位强势区，尚未进入极度超买钝化区，具备进一步冲高动能</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">盘前大幅跳空10%以上显示极强多头动能；底部结构完整且已完成右侧放量确认；美股小盘股板块情绪回暖，3倍杠杆具备较高的波动溢价赔率；价格站稳5日/10日均线，趋势延续性较强</div>
+                </div>
+            </div>
+            <div class="card" data-score="1" data-action="不交易" data-market="美股" data-name="海科航空 (heico corp)" data-code="hei">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>海科航空 (Heico Corp)</h3>
+                        <div class="stock-code">HEI</div>
+                    </div>
+                    <div class="score-badge">1</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">航空航天与国防</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">275.38</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-0.50%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约370亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">290.00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">282.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">空头排列; 趋势已发生右侧破位; 处于左侧探底阶段</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">零轴下方运行; 双线开口收窄但未形成有效金叉; 能量柱虽有缩短但仍处于弱势区间</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">J值从超卖区回勾，处于超跌反抽过程，但动能不具延续性，警惕低位钝化</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">大趋势处于下行通道，高点持续下移；右侧破位后未见明显止跌企稳迹象；赔率极低，属于左侧博反弹高风险区域；均线系统呈空头排列，压制明显</div>
+                </div>
+            </div>
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="fabrinet" data-code="fn">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>Fabrinet</h3>
+                        <div class="stock-code">FN</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">半导体/光通信元件</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">557.72</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+0.61% (盘前+7.57%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约200亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">605.00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">630.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">右侧中长期上升趋势延续；目前处于高位震荡箱体上沿，呈现重心上移态势</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">运行于零轴上方强势区域；目前DIF与DEA处于收敛状态，有望随着盘前缺口带动形成低位金叉向上开口</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">KDJ处于中值区域金叉向上发散；未进入超买钝化区，具备进一步上攻动能</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">所属光通信板块景气度极高，基本面支撑强劲；盘前大幅跳空突破了短期均线压制，属于典型的右侧趋势启动信号；量价关系显示多头控盘能力强；赔率方面，若突破箱体将打开上方新空间，风险收益比较为理想</div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="不交易 (等待右侧突破信号)" data-market="美股" data-name="赛默飞世尔 (thermo fisher scientific)" data-code="tmo">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>赛默飞世尔 (Thermo Fisher Scientific)</h3>
+                        <div class="stock-code">TMO</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易 (等待右侧突破信号)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">生命科学服务与医疗器械</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">489.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+0.27% (盘后+2.86%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约 1890 亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">505.00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">520.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">大周期处于下降通道后的低位横盘筑底阶段；重心暂时企稳，但尚未形成多头排列；属于左侧末端向右侧转换的观察期</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未显示具体曲线，基于价格形态推断处于零轴下方金叉后的缓慢修复期，动能柱弱势收敛</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未显示具体曲线，基于震荡反抽走势推断处于中位向上发散，尚未进入超买钝化区</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">趋势处于大跌后的磨底阶段，右侧信号尚不稳固；500点整数关口存在较强技术压制；虽然盘后异动预示反弹，但需观察能否通过放量阳线站稳压力位；当前赔率虽高但胜率仍需右侧确认</div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="观察" data-market="美股" data-name="中国大盘股etf-ishares" data-code="fxi">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>中国大盘股ETF-iShares</h3>
+                        <div class="stock-code">FXI</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">观察</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">中国海外互联网/中概大盘股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">35.48</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-0.20%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约102.4亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">36.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">38.50</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">下行通道末端横盘震荡；重心下移速度放缓；尚未形成多头排列右侧确认</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">零轴下方运行；绿色动能柱持续收缩；存在潜在的低位金叉及底背离预期</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">处于20附近超卖区；J线低位钝化后开始勾头；观察金叉确认信号</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">趋势层面仍处于左侧探底后的弱势整理，缺乏放量中阳线确立右侧起点；盘后价格跳空反映情绪回暖，但需观察开盘后能否站稳36关口并伴随量能放大；目前属于博弈超跌反抽的观察期，赔率尚可但胜率需右侧确认；严格遵守不破底不离场，不突破不加仓原则</div>
+                </div>
+            </div>
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="三倍做多纳指etf-proshares" data-code="tqqq">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>三倍做多纳指ETF-ProShares</h3>
+                        <div class="stock-code">TQQQ</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">纳斯达克100科技权重</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">44.150 (盘前 48.660)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+0.11% (盘前 +10.22%)</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约 220 亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">48.60</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">54.50</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">右侧底部分形确立；短期下行趋势已破坏；目前处于超跌反抽向趋势反转演变的右侧确认阶段；盘前大幅跳空预示多头加速。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">零轴下方形成低位金叉并向上发散；红柱持续放大；显示多头动能正在加速释放。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">KDJ金叉向上，J值进入强势区（80以上）；虽有短期钝化风险，但在趋势加速期属于强势特征。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">日线级别底部分形结构完成；盘前巨大跳空缺口确立右侧强势地位；MACD与价格走势共振向上；纳指成分股整体重心抬升带动杠杆ETF爆发；当前赔率尚可，以缺口作为新支撑博取趋势延续。</div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="多头" data-market="美股" data-name="2倍比特期货etf-volatility shares" data-code="bitx">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>2倍比特期货ETF-Volatility Shares</h3>
+                        <div class="stock-code">BITX</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">加密货币/数字资产</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">15.22</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-2.25%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约15.4亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">18.00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">24.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">大级别左侧下跌后的底部横盘筑底阶段；目前处于箱体震荡中枢；尚未形成标准的多头排列，但重心有企稳迹象。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">运行于零轴下方；红柱持续缩短；快慢线趋于粘合，处于金叉形成的边缘，动能正在蓄势。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">K线与D线在50中性区缠绕；未进入超买钝化区；暂无背离现象。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">标的经历大幅调整后进入低位横盘，下行风险已部分释放，赔率较高；盘前大幅跳空预示多头情绪回归，具备右侧试错价值；当前尚未形成完全的多头排列，故给予中性评分并建议轻仓切入；严格观察14.00至18.00的区间破位方向。</div>
+                </div>
+            </div>
+            <div class="card" data-score="1" data-action="不交易" data-market="美股" data-name="三倍做空小盘股etf-direxion" data-code="tza">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>三倍做空小盘股ETF-Direxion</h3>
+                        <div class="stock-code">TZA</div>
+                    </div>
+                    <div class="score-badge">1</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">小盘股/罗素2000反向</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">6.63</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-0.75%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约8.41亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">无</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">6.80</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">右侧破位下行；空头排列特征明显，重心持续下移</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">指标未在图中明示，但根据价格动能判断处于零轴下方且空头头寸扩张期</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">指标未在图中明示，但价格处于近期低点，暗示进入超卖区但暂无金叉转强信号</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">趋势完全破位，价格处于下降通道，不符合右侧交易买入标准；三倍杠杆反向ETF损耗巨大，在底层资产（罗素2000）走强背景下，该标的赔率极低；关键支撑位6.80已由支撑转为压力，目前处于左侧寻底阶段</div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="不交易" data-market="美股" data-name="中国海外互联网etf-kraneshares" data-code="kweb">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>中国海外互联网ETF-KraneShares</h3>
+                        <div class="stock-code">KWEB</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">中国互联网/中概股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">28.06</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-0.28%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约58.4亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">29.30</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">31.50</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">低位震荡筑底期；长期处于下行趋势中，短期重心在27.6-28.5区间走平，尚未形成多头排列</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">运行于零轴下方；低位金叉初期；红柱动能极其微弱，属于超跌反抽性质</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">低位交叉向上发散；未进入超买区；动能处于修复阶段</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">大趋势仍受制于下行压力线，右侧反转信号尚未明确；缩量震荡导致资金参与意愿不高；赔率虽然尚可，但当前时间节点胜率偏低，建议等待放量突破或回踩确认后再行介入；盘后涨幅需视次日开盘及量能能否维持而定</div>
+                </div>
+            </div>
+            <div class="card" data-score="4" data-action="多头" data-market="美股" data-name="小型黄金矿业etf-vaneck" data-code="gdxj">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>小型黄金矿业ETF-VanEck</h3>
+                        <div class="stock-code">GDXJ</div>
+                    </div>
+                    <div class="score-badge">4</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge long">多头</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">贵金属/黄金开采</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">122.91 (盘前130.82)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value positive">+1.39%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约130亿美元</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">131.00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">150.00</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">大级别上涨趋势中的次级回调企稳；目前正处于右侧筑底回升阶段；盘前大幅跳空预示趋势反转确认。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未显示具体指标，根据价格推断处于零轴下方死叉收敛，即将形成低位金叉共振。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未显示具体指标，根据近期股价从157回落至120的过程判断，处于超卖区后的低位钝化扭转期。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">基本面黄金板块走势强劲；K线结构在120元关键位获得右侧支撑确认；盘前+6.44%的涨幅释放了极强的趋势延续信号；当前位置介入赔率较高。</div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="不交易" data-market="美股" data-name="21shares bitcoin etf" data-code="arkb">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>21Shares Bitcoin ETF</h3>
+                        <div class="stock-code">ARKB</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">加密货币</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">22.90</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-1.08%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约20亿-30亿美元规模</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">24.50</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">21.50</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">低位区间震荡; 处于下行趋势后的筑底横盘期; 暂无清晰多头排列; 属于右侧确认前的观察阶段</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未显示具体指标; 从K线速率判断动能正处于零轴附近交织; 缺乏趋势性指向</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未显示具体指标; 推测处于中位震荡区; 无超买超卖极端信号</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">价格处于21.00-24.50宽幅震荡区间; 向上缺乏放量突破，向下有探底回升支撑; 赔率一般，目前处于左侧震荡，不符合右侧趋势交易的进场标准; 盘前虽有涨幅但未突破关键压力位</div>
+                </div>
+            </div>
+            <div class="card" data-score="3" data-action="不交易" data-market="美股" data-name="美国红利股etf-schwab" data-code="schd">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3>美国红利股ETF-Schwab</h3>
+                        <div class="stock-code">SCHD</div>
+                    </div>
+                    <div class="score-badge">3</div>
+                </div>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <div class="info-label">交易动作</div>
+                        <div class="info-value"><span class="action-badge hold">不交易</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属板块</div>
+                        <div class="info-value">价值红利/高股息板块</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">30.56</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value"><span class="info-value negative">-0.26%</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市值</div>
+                        <div class="info-value">约500亿-600亿美元规模（基于SCHD历史体量）</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">市场</div>
+                        <div class="info-value">美股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">加仓价格</div>
+                        <div class="info-value">31.20</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">减仓价格</div>
+                        <div class="info-value">30.10</div>
+                    </div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">趋势结构</div>
+                    <div class="card-section-content">高位震荡修正阶段；长期上升趋势保持完好，但短期上涨动能衰竭，目前处于右侧横盘筑底或中继整理结构，缺乏明确的方向性突破。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">MACD状态</div>
+                    <div class="card-section-content">图中未显示具体指标曲线，根据价格走势判断预计处于零轴上方死叉后的修复期，能量柱缩短。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">KDJ状态</div>
+                    <div class="card-section-content">图中未显示具体指标曲线，根据价格窄幅波动推测处于中位区震荡，无明显的超买或超卖钝化。</div>
+                </div>
+                
+                <div class="card-section">
+                    <div class="card-section-title">分析原因</div>
+                    <div class="card-section-content">大趋势虽为多头排列，但短期进入“鱼身”后的震荡休整期，赔率一般；目前处于左侧回调企稳阶段，尚未出现右侧放量反包阴线或突破信号；红利类资产对利率敏感，当前价格波动收敛，需等待市场选择方向；严格遵循右侧交易原则，不提前埋伏，仅在突破确立后介入。</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="no-results" id="noResults" style="display: none;">
+            没有找到匹配的结果
+        </div>
+    </div>
+    
+    <script>
+        // 获取所有卡片
+        const cards = Array.from(document.querySelectorAll('.card'));
+        const totalCount = 48;
+        document.getElementById('totalCount').textContent = totalCount;
+        
+        function filterAndSort() {
+            const selectedScores = Array.from(
+                document.querySelectorAll('#scoreFilter input:checked')
+            ).map(cb => cb.value);
+            const selectedActions = Array.from(
+                document.querySelectorAll('#actionFilter input:checked')
+            ).map(cb => cb.value);
+            const selectedMarkets = Array.from(
+                document.querySelectorAll('#marketFilter input:checked')
+            ).map(cb => cb.value);
+            const sortBy = document.getElementById('sortSelect').value;
+            
+            // 筛选卡片
+            let visibleCards = cards.filter(card => {
+                const score = card.getAttribute('data-score') || '';
+                const action = card.getAttribute('data-action') || '';
+                const market = card.getAttribute('data-market') || '';
+                
+                const matchScore = selectedScores.length === 0 ||
+                    selectedScores.includes(score);
+                const matchAction = selectedActions.length === 0 ||
+                    selectedActions.includes(action);
+                const matchMarket = selectedMarkets.length === 0 ||
+                    selectedMarkets.includes(market);
+                
+                return matchScore && matchAction && matchMarket;
+            });
+            
+            // 排序
+            visibleCards.sort((a, b) => {
+                switch(sortBy) {
+                    case 'score-desc': {
+                        const scoreA = parseFloat(a.getAttribute('data-score') || 0);
+                        const scoreB = parseFloat(b.getAttribute('data-score') || 0);
+                        return scoreB - scoreA;
+                    }
+                    case 'score-asc': {
+                        const scoreA = parseFloat(a.getAttribute('data-score') || 0);
+                        const scoreB = parseFloat(b.getAttribute('data-score') || 0);
+                        return scoreA - scoreB;
+                    }
+                    case 'name-asc': {
+                        const nameA = a.getAttribute('data-name') || '';
+                        const nameB = b.getAttribute('data-name') || '';
+                        return nameA.localeCompare(nameB, 'zh-CN');
+                    }
+                    case 'name-desc': {
+                        const nameA = a.getAttribute('data-name') || '';
+                        const nameB = b.getAttribute('data-name') || '';
+                        return nameB.localeCompare(nameA, 'zh-CN');
+                    }
+                    case 'price-desc': {
+                        const priceA = parseFloat(
+                            a.querySelector('.info-item:nth-child(3) .info-value')
+                                .textContent.replace(/,/g, '') || 0
+                        );
+                        const priceB = parseFloat(
+                            b.querySelector('.info-item:nth-child(3) .info-value')
+                                .textContent.replace(/,/g, '') || 0
+                        );
+                        return priceB - priceA;
+                    }
+                    case 'price-asc': {
+                        const priceA = parseFloat(
+                            a.querySelector('.info-item:nth-child(3) .info-value')
+                                .textContent.replace(/,/g, '') || 0
+                        );
+                        const priceB = parseFloat(
+                            b.querySelector('.info-item:nth-child(3) .info-value')
+                                .textContent.replace(/,/g, '') || 0
+                        );
+                        return priceA - priceB;
+                    }
+                    default:
+                        return 0;
+                }
+            });
+            
+            // 隐藏所有卡片
+            cards.forEach(card => {
+                card.classList.add('hidden');
+            });
+            
+            // 显示匹配的卡片并重新排序
+            const container = document.getElementById('cardsContainer');
+            const noResults = document.getElementById('noResults');
+            
+            if (visibleCards.length === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+                // 重新排序 DOM 元素
+                visibleCards.forEach(card => {
+                    card.classList.remove('hidden');
+                    container.appendChild(card);
+                });
+            }
+            
+            // 更新统计
+            document.getElementById('displayCount').textContent = visibleCards.length;
+        }
+        
+        // 绑定事件
+        document.getElementById('sortSelect').addEventListener('change', filterAndSort);
+        document.querySelectorAll(
+            '#scoreFilter input, #actionFilter input, #marketFilter input'
+        ).forEach(cb => {
+            cb.addEventListener('change', filterAndSort);
+        });
+        
+        // 初始显示所有卡片
+        document.getElementById('displayCount').textContent = totalCount;
+    </script>
+</body>
+</html>
